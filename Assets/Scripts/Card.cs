@@ -1,12 +1,12 @@
 using UnityEngine;
 
 public enum CardType { Ingredient, Potion }
-public enum IngredientType { RedHotChiliPepper, IronShroom, Bandage }
+public enum IngredientType { RedHotChiliPepper, IronShroom, GreenHerb }
 public enum PotionType { Attack, Defense, Heal }
-public enum EffectType { Damage, Heal, Shield, None, Attack } // or whatever types your game needs
+public enum EffectType { Damage, Heal, Shield, None, Attack }
 
-[System.Serializable]
-public class Card
+[CreateAssetMenu(fileName = "NewCard", menuName = "Cards/Card")]
+public class Card : ScriptableObject
 {
     public string cardName;
     public CardType cardType;
@@ -18,13 +18,9 @@ public class Card
     public PotionType potionType;
     public int potionLevel; // e.g., Potion 1, 2, 3
 
-    // Effect info (used in gameplay)
+    // Effect info
     public EffectType effectType;
     public int effectValue;
 
-    public Card(string name, CardType type)
-    {
-        cardName = name;
-        cardType = type;
-    }
+    public Sprite cardSprite; // assign in Inspector
 }

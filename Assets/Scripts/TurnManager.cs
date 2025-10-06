@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Cinemachine;
 
 public enum Turn { Player1, Player2 }
 
@@ -6,33 +7,73 @@ public class TurnManager : MonoBehaviour
 {
     public Turn currentTurn = Turn.Player1;
 
+    [Header("Cameras")]
+   // public CinemachineCamera player1Cam;
+   // public CinemachineCamera player2Cam;
+
+    [Header("UI")]
+    public HandUIManager player1UI;
+    public HandUIManager player2UI;
+
+    [Header("Hands")]
     public Hand player1Hand;
     public Hand player2Hand;
-    public HandUIManager handUIManager;
-
-    public Transform cameraPlayer1Position;
-    public Transform cameraPlayer2Position;
-    public Camera mainCamera;
+    public GameManager gameManager;
 
     public void StartTurn()
     {
+        Debug.Log("🎯 Starting " + currentTurn + "'s turn");
+
         if (currentTurn == Turn.Player1)
         {
-            handUIManager.playerHand = player1Hand;
-            handUIManager.RefreshHandUI();
-            mainCamera.transform.position = cameraPlayer1Position.position;
+            //player1Cam.Priority = 10;
+           // player2Cam.Priority = 0;
+
+            player1UI.playerHand = player1Hand;
+            player1UI.RefreshHand();
         }
         else
         {
-            handUIManager.playerHand = player2Hand;
-            handUIManager.RefreshHandUI();
-            mainCamera.transform.position = cameraPlayer2Position.position;
+          //  player1Cam.Priority = 0;
+           // player2Cam.Priority = 10;
+
+            player2UI.playerHand = player2Hand;
+            player2UI.RefreshHand();
+        }
+    }
+
+    public void newTurn()
+    {
+        Debug.Log("🎯 Starting " + currentTurn + "'s turn");
+
+        if (currentTurn == Turn.Player1)
+        {
+            gameManager.DrawCards(player1Hand);
+            player1UI.playerHand = player1Hand;
+            player1UI.RefreshHand();
+        }
+        else
+        {
+            gameManager.DrawCards(player2Hand);
+            player2UI.playerHand = player2Hand;
+            player2UI.RefreshHand();
         }
     }
 
     public void EndTurn()
     {
-        currentTurn = currentTurn == Turn.Player1 ? Turn.Player2 : Turn.Player1;
-        StartTurn();
+        // Switch turns
+        currentTurn = (currentTurn == Turn.Player1) ? Turn.Player2 : Turn.Player1;
+        Debug.Log("Switching turn to " + currentTurn);
+        newTurn();
     }
+
+    void Update()
+{
+    // Only allow the current player to end their turn
+    if (Input.GetKeyDown(KeyCode.Return))
+    {
+        EndTurn();
+    }
+}
 }

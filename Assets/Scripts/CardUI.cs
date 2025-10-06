@@ -4,18 +4,32 @@ using UnityEngine.UI;
 
 public class CardUI : MonoBehaviour
 {
-    public TextMeshProUGUI nameText;
-    public TextMeshProUGUI effectText;
-    public Image icon;
-
+    public Image icon; // assign this to the same Image component
+    public Button playButton; // assign this in Inspector
     private Card card;
+    private CardSelectionManager selectionManager;
 
-    public void SetCard(Card newCard)
+   // [System.Obsolete]
+    private void Awake()
+    {
+        // Find the manager in scene (or assign in Inspector)
+        selectionManager = FindFirstObjectByType<CardSelectionManager>();
+
+        if (playButton != null)
+        {
+            playButton.onClick.AddListener(() =>
+            {
+                selectionManager.PlaySelectedCard(this);
+            });
+        }
+    }
+
+    public void SetCard(Card newCard, Sprite iconSprite = null)
     {
         card = newCard;
-        nameText.text = card.cardName;
-        effectText.text = card.effectType != EffectType.None ? card.effectType + " " + card.effectValue : "";
-        // Optionally set icon.sprite here if you have card images
+
+        if (icon != null && iconSprite != null)
+            icon.sprite = iconSprite;
     }
 
     public Card GetCard()

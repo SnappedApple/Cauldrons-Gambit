@@ -3,42 +3,53 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public DeckManager deck;
-    public Hand player1Hand, player2Hand;
-    public Player player1Stats, player2Stats;
+    public TurnManager turnManager;
+
+    [Header("Players")]
+    public Hand player1Hand;
+    public Hand player2Hand;
+
+    public Player player1;
+    public Player player2;
+
+    [Header("Turn Settings")]
     public int turnCount = 0;
     public int maxTurnsBeforeBattle = 5;
 
     void Start()
     {
-        deck.Shuffle();
+        Debug.Log("Starting game!");
         StartTurn();
     }
 
-    void StartTurn()
+    public void StartTurn()
     {
         turnCount++;
+
+        deck.SetupButtonForHand(player1Hand, player1Hand.handParent);
+        deck.SetupButtonForHand(player2Hand, player2Hand.handParent);
+
         DrawCards(player1Hand);
-        DrawCards(player2Hand);
 
-        if(turnCount >= maxTurnsBeforeBattle)
+        turnManager.StartTurn(); // delegate to TurnManager
+    }
+
+    public void DrawCards(Hand hand)
+    {
+        deck.DrawRandomCard(hand);
+    }
+
+    public void CheckGameOver()
+    {
+        if (player1.currentHealth <= 0)
         {
-            BattlePhase();
-            turnCount = 0;
+            Debug.Log("Player 2 wins!");
+        }
+        else if (player2.currentHealth <= 0)
+        {
+            Debug.Log("Player 1 wins!");
         }
     }
 
-    void DrawCards(Hand hand)
-    {
-        for(int i=0; i<1; i++) // 1 card per turn
-        {
-            Card c = deck.DrawCard();
-            if(c != null) hand.AddCard(c);
-        }
-    }
-
-    void BattlePhase()
-    {
-        Debug.Log("Battle phase! Apply potions from hands.");
-        // Implement turn-based or simultaneous application of potions here
-    }
+    
 }
